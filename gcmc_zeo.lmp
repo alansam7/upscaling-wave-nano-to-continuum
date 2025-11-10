@@ -1,0 +1,65 @@
+# variables modifiable using -var command line switch
+
+variable        mu index -8.1410860247 # 3atm
+  #valeur à modifier
+variable        temp index 300  #K
+variable	disp index 3.48 #A
+
+
+# global model settings
+
+units           real
+boundary	p p p 
+atom_style      full
+bond_style	harmonic
+angle_style	harmonic
+
+# cuttof de 13
+pair_style      lj/cut/coul/long 13 13 
+#
+# lj parameters
+
+variable	Otype	equal 1 
+variable	Sitype	equal 2 
+variable	CH4type	equal 3 
+
+variable        dt equal 0.5 
+
+# box
+
+read_data       system_gcmc.lmpsys
+kspace_style    pppm 1.0e-5
+
+
+#param skoulidas
+
+
+pair_coeff	${Otype} ${Otype} 0.190865731 3.107819135
+pair_coeff	${Otype} ${Sitype} 0.000393704 3.416463223
+pair_coeff      ${Otype} ${CH4type}     0.2647 3.214
+pair_coeff	${Sitype} ${Sitype} 0.000001646853 3.344780302
+pair_coeff	${Sitype} ${CH4type}	0 0
+pair_coeff	${CH4type} ${CH4type}	0.2938 3.73    
+
+group 		fluid type ${CH4type}
+group 		zeolite type ${Sitype} ${Otype}
+timestep 	${dt}
+
+fix             mygcmc fluid gcmc 10 10 10 3 29494 ${temp} ${mu} ${disp}
+fix      	mynvt  all nvt temp ${temp} ${temp} $(10.0*dt) 
+
+fix 		myzeoframe zeolite recenter INIT INIT INIT shift all
+fix 		myzeovelo zeolite momentum 100 linear 1 1 1
+
+dump            dmp all custom 100 dump.lammpstrj id type x y z
+
+# output
+
+thermo_style    custom step temp atoms pe ke etotal press
+thermo          1 # Ecriture ts les ..
+
+# run
+
+run             500000
+write_data	config.new
+
