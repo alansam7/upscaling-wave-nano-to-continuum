@@ -3,7 +3,7 @@
 
 This repository contains the input files, representative system configurations, and analysis codes supporting the study:
 
-> **“Acoustic Response of Molecular Adsorption and Sound Propagation in Nanoporous Materials.”**
+> **“Wave propagation in fluid-saturated nanoporous media: Upscaling molecular mechanics into continuum-level description”**
 
 The work combines molecular simulations and chemo-poroelastic theory to bridge nanoscale structure–transport coupling in zeolitic materials.
 
